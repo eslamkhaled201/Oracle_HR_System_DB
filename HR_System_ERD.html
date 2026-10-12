@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>HR System | Entity Relationship Diagram</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f5ef;
+      --surface: #fffefa;
+      --ink: #18312e;
+      --muted: #667571;
+      --line: #d9dfd8;
+      --green: #147c68;
+      --green-soft: #dcefe8;
+      --coral: #d46f57;
+      --blue: #507f9b;
+      --shadow: 0 18px 50px rgb(24 49 46 / 8%);
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      background-color: var(--paper);
+      background-image: radial-gradient(#c7d3ca 0.65px, transparent 0.65px);
+      background-size: 17px 17px;
+    }
+
+    .page {
+      width: min(1480px, calc(100% - 56px));
+      margin: 0 auto;
+      padding: 38px 0 52px;
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+    }
+
+    .topline::before {
+      width: 24px;
+      height: 2px;
+      background: var(--coral);
+      content: "";
+    }
+
+    .heading-row {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 32px;
+      padding-bottom: 26px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1 {
+      max-width: 740px;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(34px, 5vw, 62px);
+      font-weight: 500;
+      line-height: 1.04;
+    }
+
+    .subtitle {
+      max-width: 370px;
+      margin: 0 0 4px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 0 14px;
+    }
+
+    .diagram-label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .diagram-label .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 4px var(--green-soft);
+    }
+
+    .actions { display: flex; gap: 8px; }
+
+    button {
+      display: inline-flex;
+      min-height: 38px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      color: var(--ink);
+      background: var(--surface);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    button:hover { border-color: var(--green); color: var(--green); }
+    button:focus-visible { outline: 3px solid #8ac7b4; outline-offset: 2px; }
+    button svg { width: 16px; height: 16px; }
+
+    .diagram-frame {
+      overflow: auto;
+      min-height: 460px;
+      border: 1px solid #e0e4dd;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .diagram-inner {
+      min-width: 980px;
+      padding: 28px 28px 32px;
+    }
+
+    .mermaid {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      text-align: center;
+    }
+
+    .mermaid svg { max-width: none; }
+
+    .legend {
+      display: grid;
+      grid-template-columns: 1.1fr 1.4fr 1.5fr;
+      gap: 26px;
+      padding: 22px 2px 0;
+    }
+
+    .legend-block { min-width: 0; }
+
+    .legend-title {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .legend-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px 14px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: #43534f;
+      font-size: 12px;
+    }
+
+    .key {
+      display: inline-grid;
+      width: 25px;
+      height: 22px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      color: var(--green);
+      background: var(--surface);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .cardinality {
+      color: var(--coral);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .source-note {
+      margin: 22px 0 0;
+      padding-top: 13px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .error {
+      padding: 18px;
+      color: #8d3927;
+      background: #fff2ec;
+      font-size: 14px;
+    }
+
+    @media (max-width: 720px) {
+      .page { width: min(100% - 32px, 1480px); padding-top: 25px; }
+      .heading-row { align-items: start; flex-direction: column; gap: 12px; }
+      .subtitle { max-width: 520px; }
+      .toolbar { align-items: start; flex-direction: column; }
+      .legend { grid-template-columns: 1fr; gap: 18px; }
+      .diagram-frame { min-height: 380px; }
+    }
+
+    @media print {
+      body { background: white; }
+      .page { width: 100%; padding: 0; }
+      .topline, .actions, .legend { display: none; }
+      .heading-row { padding-bottom: 12px; }
+      h1 { font-size: 30px; }
+      .subtitle { font-size: 11px; }
+      .toolbar { padding: 10px 0; }
+      .diagram-frame { min-height: 0; overflow: visible; border: 0; box-shadow: none; }
+      .diagram-inner { min-width: 0; padding: 8px 0; }
+      .mermaid svg { width: 100% !important; height: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="topline">Data architecture / 01</div>
+    <header class="heading-row">
+      <h1>HR System<br>Entity Relationship Diagram</h1>
+      <p class="subtitle">A map of employee records, job history, salary components, and payroll processing.</p>
+    </header>
+
+    <section aria-label="Entity relationship diagram">
+      <div class="toolbar">
+        <div class="diagram-label"><span class="dot" aria-hidden="true"></span>10 entities <span aria-hidden="true">·</span> 14 relationships</div>
+        <div class="actions">
+          <button type="button" id="export-svg" title="Download the diagram as SVG">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v4h14v-4"/></svg>
+            Export SVG
+          </button>
+          <button type="button" id="print-page" title="Print the diagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M7 14h10v7H7z"/><path d="M18 11h.01"/></svg>
+            Print
+          </button>
+        </div>
+      </div>
+
+      <div class="diagram-frame">
+        <div class="diagram-inner">
+          <pre class="mermaid" id="erd">
+erDiagram
+    DEPARTMENTS {
+        NUMBER department_id PK
+        VARCHAR2 department_name
+        VARCHAR2 location
+    }
+
+    JOBS {
+        NUMBER job_id PK
+        VARCHAR2 job_title UK
+        NUMBER min_salary
+        NUMBER max_salary
+        NUMBER department_id FK
+    }
+
+    EMPLOYEES {
+        NUMBER employee_id PK
+        VARCHAR2 first_name
+        VARCHAR2 last_name
+        VARCHAR2 email UK
+        VARCHAR2 phone_number
+        DATE hire_date
+        NUMBER job_id FK
+        NUMBER department_id FK
+        NUMBER manager_id FK
+        NUMBER salary
+        VARCHAR2 status
+    }
+
+    JOB_HISTORY {
+        NUMBER job_history_id PK
+        NUMBER employee_id FK
+        DATE start_date
+        DATE end_date
+        NUMBER job_id FK
+        NUMBER department_id FK
+    }
+
+    SALARY_AUDIT {
+        NUMBER audit_id PK
+        NUMBER employee_id FK
+        NUMBER old_salary
+        NUMBER new_salary
+        VARCHAR2 changed_by
+        DATE changed_on
+    }
+
+    SALARY_COMPONENTS {
+        NUMBER component_id PK
+        VARCHAR2 component_name UK
+        VARCHAR2 component_type
+        CHAR is_percentage
+        NUMBER default_value
+    }
+
+    EMPLOYEE_SALARY_COMPONENTS {
+        NUMBER emp_component_id PK
+        NUMBER employee_id FK
+        NUMBER component_id FK
+        NUMBER value
+    }
+
+    PAYROLL_RUNS {
+        NUMBER payroll_run_id PK
+        NUMBER period_month UK
+        NUMBER period_year UK
+        DATE run_date
+        VARCHAR2 status
+    }
+
+    PAYSLIPS {
+        NUMBER payslip_id PK
+        NUMBER payroll_run_id FK, UK
+        NUMBER employee_id FK, UK
+        NUMBER gross_salary
+        NUMBER total_deductions
+        NUMBER net_salary
+        DATE generated_on
+    }
+
+    PAYSLIP_DETAILS {
+        NUMBER detail_id PK
+        NUMBER payslip_id FK
+        NUMBER component_id FK
+        NUMBER amount
+    }
+
+    DEPARTMENTS ||--o{ EMPLOYEES : assigns
+    JOBS ||--o{ EMPLOYEES : classifies
+    DEPARTMENTS o|--o{ JOBS : owns
+    EMPLOYEES o|--o{ EMPLOYEES : manages
+    EMPLOYEES ||--o{ JOB_HISTORY : has
+    JOBS ||--o{ JOB_HISTORY : records
+    DEPARTMENTS o|--o{ JOB_HISTORY : records
+    EMPLOYEES ||--o{ SALARY_AUDIT : changes
+    EMPLOYEES ||--o{ EMPLOYEE_SALARY_COMPONENTS : receives
+    SALARY_COMPONENTS ||--o{ EMPLOYEE_SALARY_COMPONENTS : assigned_as
+    PAYROLL_RUNS ||--o{ PAYSLIPS : generates
+    EMPLOYEES ||--o{ PAYSLIPS : receives
+    PAYSLIPS ||--o{ PAYSLIP_DETAILS : contains
+    SALARY_COMPONENTS ||--o{ PAYSLIP_DETAILS : itemizes
+          </pre>
+        </div>
+      </div>
+
+      <div class="legend" aria-label="Diagram legend">
+        <div class="legend-block">
+          <h2 class="legend-title">Column keys</h2>
+          <div class="legend-items">
+            <span class="legend-item"><span class="key">PK</span> Primary key</span>
+            <span class="legend-item"><span class="key">FK</span> Foreign key</span>
+            <span class="legend-item"><span class="key">UK</span> Unique key</span>
+          </div>
+        </div>
+        <div class="legend-block">
+          <h2 class="legend-title">Relationship ends</h2>
+          <div class="legend-items">
+            <span class="legend-item"><span class="cardinality">||</span> Exactly one</span>
+            <span class="legend-item"><span class="cardinality">o|</span> Zero or one</span>
+            <span class="legend-item"><span class="cardinality">o{</span> Zero or many</span>
+          </div>
+        </div>
+        <div class="legend-block">
+          <h2 class="legend-title">Associative entities</h2>
+          <div class="legend-items">
+            <span class="legend-item">EMPLOYEE_SALARY_COMPONENTS links employees to salary components.</span>
+            <span class="legend-item">PAYSLIP_DETAILS itemizes components on each payslip.</span>
+          </div>
+        </div>
+      </div>
+      <p class="source-note">Based on the table and constraint definitions in Create_Tables_HR_System.sql.</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script>
+    const diagram = document.querySelector("#erd");
+    const exportButton = document.querySelector("#export-svg");
+    const printButton = document.querySelector("#print-page");
+
+    printButton.addEventListener("click", () => window.print());
+
+    (async () => {
+      try {
+      mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: "strict",
+        theme: "base",
+        themeVariables: {
+          background: "#fffefa",
+          primaryColor: "#e4f1eb",
+          primaryTextColor: "#18312e",
+          primaryBorderColor: "#147c68",
+          lineColor: "#667571",
+          tertiaryColor: "#fff0e8",
+          fontFamily: "Segoe UI, Tahoma, sans-serif"
+        }
+      });
+      await mermaid.run({ nodes: [diagram] });
+
+      exportButton.addEventListener("click", () => {
+        const svg = diagram.querySelector("svg");
+        if (!svg) return;
+        const source = new XMLSerializer().serializeToString(svg);
+        const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "HR_System_ERD.svg";
+        link.click();
+        URL.revokeObjectURL(link.href);
+      });
+      } catch (error) {
+        diagram.outerHTML = '<div class="error" role="alert">The diagram renderer could not load. Check your internet connection and reload this page.</div>';
+        exportButton.disabled = true;
+        console.error("Could not render the HR ER diagram:", error);
+      }
+    })();
+  </script>
+</body>
+</html>
